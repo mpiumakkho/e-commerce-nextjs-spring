@@ -1,4 +1,4 @@
-package com.mp.ecommerce.user;
+package com.mp.ecommerce.user.entity;
 
 import java.time.LocalDateTime;
 
@@ -27,36 +27,26 @@ import lombok.NoArgsConstructor;
 @Table(name = "users", schema = "auth")
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class UserEntity {
     @Id
     @Column(length = 36)
     private String id;
 
-    @NotBlank
-    @Size(max = 50)
     @Column(nullable = false)
     private String username;
 
-    @NotBlank
-    @Size(max = 100)
-    @Email
     @Column(nullable = false)
     private String email;
 
-    @NotBlank
-    @Size(max = 255)
     @Column(name = "password_hash", nullable = false)
     private String password;
 
-    @Size(max = 50)
     @Column(name = "first_name")
     private String firstName;
 
-    @Size(max = 50)
     @Column(name = "last_name")
     private String lastName;
 
-    @Size(max = 20)
     @Column(name = "phone_number")
     private String phoneNumber;
 
@@ -78,11 +68,9 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Size(max = 50)
     @Column(name = "created_by")
     private String createdBy;
 
-    @Size(max = 50)
     @Column(name = "updated_by")
     private String updatedBy;
 
@@ -93,4 +81,30 @@ public class User {
     public String getPassword() { return password; }
     public UserRole getRole() { return role; }
     public boolean isActive() { return isActive; }
+    
+    // setters
+    public void setId(String id) { this.id = id; }
+    public void setUsername(String username) { this.username = username; }
+    public void setEmail(String email) { this.email = email; }
+    public void setPassword(String password) { this.password = password; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+    public void setAddress(String address) { this.address = address; }
+    public void setRole(UserRole role) { this.role = role; }
+    public void setActive(boolean isActive) { this.isActive = isActive; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+    public void setUpdatedBy(String updatedBy) { this.updatedBy = updatedBy; }
+    
+    // additional getters
+    public String getFirstName() { return firstName; }
+    public String getLastName() { return lastName; }
+    public String getPhoneNumber() { return phoneNumber; }
+    public String getAddress() { return address; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public String getCreatedBy() { return createdBy; }
+    public String getUpdatedBy() { return updatedBy; }
 } 

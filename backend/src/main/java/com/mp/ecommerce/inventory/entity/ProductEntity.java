@@ -1,11 +1,10 @@
-package com.mp.ecommerce.inventory;
+package com.mp.ecommerce.inventory.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -20,10 +19,9 @@ import lombok.NoArgsConstructor;
 @Table(name = "products", schema = "inventory")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class ProductEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @NotBlank
     @Column(nullable = false)
@@ -40,9 +38,18 @@ public class Product {
     @Column(nullable = false)
     private Integer stockQuantity;
 
+    @Column(name = "category_id")
+    private String categoryId;
+
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(nullable = false)
-    private boolean active = true;
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive = true;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 } 
