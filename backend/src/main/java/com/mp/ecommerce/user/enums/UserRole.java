@@ -1,9 +1,14 @@
 package com.mp.ecommerce.user.enums;
 
 public enum UserRole {
-    USER,
+    SUPER_ADMIN,
     ADMIN,
-    STAFF,
     MANAGER,
-    CUSTOMER_SERVICE
+    STAFF,
+    CUSTOMER,
+    MARKETING,
+    SUPPORT,
+    QA,
+    LOGISTICS,
+    FINANCE
 } 
