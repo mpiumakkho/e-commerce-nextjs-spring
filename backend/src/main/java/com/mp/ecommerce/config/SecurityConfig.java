@@ -18,23 +18,23 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.mp.ecommerce.common.security.JwtAuthenticationFilter;
+import com.mp.ecommerce.common.security.JwtAuthFilter;
 import com.mp.ecommerce.common.security.JwtEntryPoint;
-import com.mp.ecommerce.common.security.UserDetailsServiceImpl;
+import com.mp.ecommerce.common.security.SecurityUserService;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
     @Autowired
-    UserDetailsServiceImpl userDetailsService;
+    SecurityUserService userDetailsService;
 
     @Autowired
     private JwtEntryPoint unauthorizedHandler;
 
     @Bean
-    public JwtAuthenticationFilter authenticationJwtTokenFilter() {
-        return new JwtAuthenticationFilter();
+    public JwtAuthFilter authenticationJwtTokenFilter() {
+        return new JwtAuthFilter();
     }
 
     @Bean

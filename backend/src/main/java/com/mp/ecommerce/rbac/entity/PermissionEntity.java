@@ -13,12 +13,14 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "roles", schema = "rbac")
-public class RoleEntity {
+@Table(name = "permissions", schema = "rbac")
+public class PermissionEntity {
     @Id
-    private String roleId;
+    private String permissionId;
     private String name;
     private String description;
+    private String resource;
+    private String action;
     private boolean isActive = true;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -30,28 +32,31 @@ public class RoleEntity {
     private String attribute4;
     private String attribute5;
     
-    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "permission", fetch = FetchType.LAZY)
     private Set<RolePermissionEntity> rolePermissions = new HashSet<>();
     
-    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
-    private Set<UserRoleEntity> userRoles = new HashSet<>();
+    public PermissionEntity() {}
     
-    public RoleEntity() {}
-    
-    public RoleEntity(String roleId, String name, String description) {
-        this.roleId = roleId;
+    public PermissionEntity(String permissionId, String name, String description, String resource, String action) {
+        this.permissionId = permissionId;
         this.name = name;
         this.description = description;
+        this.resource = resource;
+        this.action = action;
         this.isActive = true;
         this.createdAt = LocalDateTime.now();
     }
     
-    public String getRoleId() { return roleId; }
-    public void setRoleId(String roleId) { this.roleId = roleId; }
+    public String getPermissionId() { return permissionId; }
+    public void setPermissionId(String permissionId) { this.permissionId = permissionId; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    public String getResource() { return resource; }
+    public void setResource(String resource) { this.resource = resource; }
+    public String getAction() { return action; }
+    public void setAction(String action) { this.action = action; }
     public boolean isActive() { return isActive; }
     public void setActive(boolean isActive) { this.isActive = isActive; }
     public LocalDateTime getCreatedAt() { return createdAt; }
@@ -74,8 +79,6 @@ public class RoleEntity {
     public void setAttribute5(String attribute5) { this.attribute5 = attribute5; }
     public Set<RolePermissionEntity> getRolePermissions() { return rolePermissions; }
     public void setRolePermissions(Set<RolePermissionEntity> rolePermissions) { this.rolePermissions = rolePermissions; }
-    public Set<UserRoleEntity> getUserRoles() { return userRoles; }
-    public void setUserRoles(Set<UserRoleEntity> userRoles) { this.userRoles = userRoles; }
     
     @PrePersist
     protected void onCreate() {

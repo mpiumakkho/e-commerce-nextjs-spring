@@ -1,6 +1,7 @@
 package com.mp.ecommerce.auth;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -17,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mp.ecommerce.common.security.UserDetailsImpl;
+import com.mp.ecommerce.common.security.SecurityUser;
 import com.mp.ecommerce.common.util.JwtUtils;
-
-import jakarta.validation.Valid;
+import com.mp.ecommerce.common.validation.AuthValidator;
+import com.mp.ecommerce.user.enums.UserRole;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -35,29 +36,31 @@ public class AuthController {
     JwtUtils jwtUtils;
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+        AuthValidator.validateLoginRequest(loginRequest.getUsername(), loginRequest.getPassword());
+        
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
+        SecurityUser userDetails = (SecurityUser) authentication.getPrincipal();
+        Set<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority().replace("ROLE_", ""))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
-        return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                roles));
+        return ResponseEntity.ok(new JwtResponse(jwt, null, userDetails.getId(),
+                userDetails.getUsername(), userDetails.getEmail(), 
+                null, null, null, roles, LocalDateTime.now().plusHours(1)));
     }
 
-    // dev auth endpoint
+    // mock auth endpoint
     @PostMapping("/mock-login")
     public ResponseEntity<?> authenticateDevelopmentUser(@RequestBody LoginRequest loginRequest) {
         logger.debug("Development authentication requested for user: {}", loginRequest.getUsername());
+        
+        AuthValidator.validateLoginRequest(loginRequest.getUsername(), loginRequest.getPassword());
         
         // check creds
         if ("mock-admin".equals(loginRequest.getUsername()) && "mock-password".equals(loginRequest.getPassword())) {
@@ -68,12 +71,9 @@ public class AuthController {
             
             // create user
             JwtResponse developmentResponse = new JwtResponse(
-                developmentToken,
-                "dev-001",
-                "mock-admin",
-                "mock-admin@example.com",
-                List.of("ADMIN")
-            );
+                developmentToken, null, "dev-001", "mock-admin", 
+                "mock-admin@example.com", "Mock", "Admin", 
+                UserRole.ADMIN, Set.of("ADMIN"), LocalDateTime.now().plusHours(1));
             
             logger.debug("Development authentication successful");
             return ResponseEntity.ok(developmentResponse);
@@ -86,10 +86,10 @@ public class AuthController {
     @GetMapping("/profile")
     public ResponseEntity<?> getUserProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || !(authentication.getPrincipal() instanceof UserDetailsImpl)) {
+        if (authentication == null || !authentication.isAuthenticated() || !(authentication.getPrincipal() instanceof SecurityUser)) {
             return ResponseEntity.status(401).body("Unauthorized: No user is authenticated");
         }
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        SecurityUser userDetails = (SecurityUser) authentication.getPrincipal();
         return ResponseEntity.ok(userDetails);
     }
 } 
